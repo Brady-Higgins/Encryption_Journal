@@ -3,6 +3,7 @@ import string
 import os
 from cryptography.fernet import Fernet
 from datetime import datetime as d
+
 class Login:
     def __init__(self):
         self.password_attempts =0
@@ -193,11 +194,13 @@ class Login:
         if choice.lower() == "quit":
             exit()
         self.Journal()
-
-if __name__ == "__main__":
+def main():
     print("Welcome to the password protected encryption journal\n"
           "If this is your first time using the system, you will have to create your password\n"
           "This will log you out of the system once succesfully created\n"
           "Please log back in after to use the journal\n")
+
     l = Login()
     l.passwordFileCheck()
+if __name__ == "__main__":
+    main()
