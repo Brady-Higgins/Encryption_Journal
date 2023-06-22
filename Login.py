@@ -1,16 +1,25 @@
+
+import os
 import random
 import string
-import os
-from cryptography.fernet import Fernet
+import sys
 from datetime import datetime as d
+
+import sys
+print(sys.version,sys.path)
+
+try:
+    from cryptography.fernet import Fernet
+except Exception as e:
+    print(e)
 
 class Login:
     def __init__(self):
         self.password_attempts =0
         self.current_directory = os.getcwd()
 
-        self.password_directory = self.current_directory + "\Password.txt"
-        self.storage_directory = self.current_directory + "\Storage.txt"
+        self.password_directory = os.path.join(os.path.dirname(__file__), "Password.txt")
+        self.storage_directory = os.path.join(os.path.dirname(__file__), "Storage.txt")
     def getPassword(self):
         password_attempt = input("Password: ")
         self.password_attempt = password_attempt
@@ -64,7 +73,7 @@ class Login:
             self.createStorageFile()
 
     def createEncryptionKey(self):
-        from cryptography.fernet import Fernet
+
 
         numeric_values = [ord(char) for char in self.password_attempt]
         i =0
@@ -108,7 +117,7 @@ class Login:
                 self.password_attempts += 1
                 if self.password_attempts == 3 :
                     print("Too many Incorrect Attempts")
-                    exit()
+                    sys.exit()
                 else :
                     print("Incorrect Password, Please Retry")
                     self.passwordFileCheck()
@@ -121,7 +130,7 @@ class Login:
                     self.password_attempts += 1
                     if self.password_attempts == 3 :
                         print("Too many Incorrect Attempts")
-                        exit()
+                        sys.exit()
                     else :
                         print("Incorrect Password, Please Retry")
                         self.passwordFileCheck()
@@ -192,7 +201,7 @@ class Login:
 
                     i += 1
         if choice.lower() == "quit":
-            exit()
+            sys.exit()
         self.Journal()
 def main():
     print("Welcome to the password protected encryption journal\n"
@@ -202,5 +211,6 @@ def main():
 
     l = Login()
     l.passwordFileCheck()
+
 if __name__ == "__main__":
     main()
