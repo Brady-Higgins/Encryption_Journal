@@ -4,18 +4,11 @@ import random
 import string
 import sys
 from datetime import datetime as d
-
-import sys
-print(sys.version,sys.path)
-
-try:
-    from cryptography.fernet import Fernet
-except Exception as e:
-    print(e)
-
+from cryptography.fernet import Fernet
 class Login:
     def __init__(self):
         self.password_attempts =0
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         self.current_directory = os.getcwd()
 
         self.password_directory = os.path.join(os.path.dirname(__file__), "Password.txt")
@@ -25,6 +18,7 @@ class Login:
         self.password_attempt = password_attempt
     def passwordFileCheck(self):
         file_list = os.listdir(self.current_directory)
+        print(self.current_directory)
         if "Password.txt" in file_list:
             self.password_attempt = input("Password: ")
             self.createEncryptionKey()
