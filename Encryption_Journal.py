@@ -181,7 +181,8 @@ class Login:
             section_val = "{" + section + "}"
             if section_val in sections:
                 pass
-            sections.append(section_val)
+            else:
+                sections.append(section_val)
             with open(self.sections_directory, 'w', encoding='utf-8') as f :
                 for line in sections:
                     f.writelines(line + "\n")
