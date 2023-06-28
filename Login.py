@@ -8,24 +8,32 @@ from cryptography.fernet import Fernet
 class Login:
     def __init__(self):
         self.password_attempts =0
+
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
         self.current_directory = os.getcwd()
 
         self.password_directory = os.path.join(os.path.dirname(__file__), "Password.txt")
         self.storage_directory = os.path.join(os.path.dirname(__file__), "Storage.txt")
+        self.sections_directory = os.path.join(os.path.dirname(__file__), "Sections.txt")
     def getPassword(self):
         password_attempt = input("Password: ")
         self.password_attempt = password_attempt
     def passwordFileCheck(self):
-        file_list = os.listdir(self.current_directory)
-        print(self.current_directory)
-        if "Password.txt" in file_list:
+        self.file_list = os.listdir(self.current_directory)
+
+
+        if "Password.txt" in self.file_list:
             self.password_attempt = input("Password: ")
             self.createEncryptionKey()
             self.validateIdentity()
 
         else:
             self.createPasswordFile()
+        if "Sections.txt" in self.file_list:
+            pass
+        else:
+            with open(self.sections_directory, 'w', encoding='utf-8') as f :
+                f.writelines("")
     def createPasswordFile(self):
         #Creates the text to fill in a password document so the password can pull pieces for the encryption code
 
@@ -131,6 +139,8 @@ class Login:
     def Journal(self):
         dayMonthDict = {1:"Jan",2:"Feb",3:"Mar",4:"Apr",5:"May",6:"Jun",7:"July",8:"Aug",9:"Sep",10:"Oct",11:"Nov",12:"Dec"}
         choice = input("Commands: Write, Read, Delete, Quit\n")
+
+        #Appends contents of encrypted text file to document_list after decrypting
         document_list = []
         with open(self.storage_directory, 'r', encoding='utf-8') as f :
             for line in f :
@@ -142,14 +152,48 @@ class Login:
                 byte_character = bytes(character, 'utf-8')
                 understandable_val = self.fernet_object.decrypt(byte_character)
                 document_list.append(understandable_val.decode())
+
+        sections = []
+        with open(self.sections_directory, 'r', encoding='utf-8') as f:
+            for line in f:
+                if line == "\n":
+                    pass
+                else:
+                    word = []
+                    for letter in line:
+                        word.append(letter)
+                    sections.append("".join(word[:-1]))
+
+
+
+
         if choice.lower() == "write" :
+
+            #Section portion: Appends to previous sections list and writes it on sections.txt
+            print("Sections: ",end="")
+            for section in sections:
+                print(section,end=", ")
+            print("\b")
+            section = input("Section: ")
+            if section.isspace() or section == "":
+                print("Improper Section Name")
+                self.Journal()
+            section_val = "{" + section + "}"
+            if section_val in sections:
+                pass
+            sections.append(section_val)
+            with open(self.sections_directory, 'w', encoding='utf-8') as f :
+                for line in sections:
+                    f.writelines(line + "\n")
+
+            #Content added is given a date then appended to end of document_list
             write_to_page = input("Add: ")
             current_time = d.now()
             month_num = int(current_time.strftime("%m"))
             month = dayMonthDict[month_num]
             day_num = str(current_time.strftime("%d"))
             time = str(current_time.strftime("%H:%M"))
-            document_list.append(month + " " + day_num + " " + time + " " + write_to_page)
+            document_list.append(section_val +" "+ month + " " + day_num + " " + time + " " + write_to_page)
             i = 0
             with open(self.storage_directory, 'w', encoding='utf-8') as f :
                 for val in document_list :
@@ -171,13 +215,31 @@ class Login:
                             val = bytes( "[" + str((i))+ "]" + " " + val, 'utf-8')
                             f.writelines( str(self.fernet_object.encrypt(val)) + "\n")
                     i += 1
-
             f.close()
 
         if choice.lower() == "read":
-            for line in document_list[1:]:
-                print(line)
+            print("Sections: ",end="")
+            for section in sections:
+                print(section,end=",")
+            print("\b")
+            read_choice = input("Total or Section Name: ")
+            if read_choice.lower() == "total":
+                for line in document_list[1:]:
+                    print(line)
+                    print("\n")
+            if "{" + read_choice + "}" in sections:
+                read_choice = "{" + read_choice + "}"
+                section_to_read = []
+                for line in document_list[1:]:
+                    sentence = line.split()
+                    section = []
 
+                    for word in sentence:
+                        if word == read_choice:
+                            section_to_read.append(line)
+                for line in section_to_read:
+                    print(line)
+                    print("\n")
         if choice.lower() == "delete":
             remove_line = input("Remove Line: ")
             i = 0
