@@ -236,7 +236,15 @@ class Login:
 
                     for word in sentence:
                         if word == read_choice:
-                            section_to_read.append(line)
+                            line_list = []
+                            for word in sentence:
+                                if word == read_choice:
+                                    pass
+                                else:
+                                    line_list.append(word)
+                                line_cleaned = " ".join(line_list)
+
+                            section_to_read.append(line_cleaned)
                 for line in section_to_read:
                     print(line)
                     print("\n")
