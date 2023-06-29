@@ -101,6 +101,7 @@ class Login:
         self.encryption_key = encryption_key_bytes
         self.fernet_object = Fernet(self.encryption_key)
 
+
     def validateIdentity(self):
         with open(self.storage_directory, 'r', encoding='utf-8') as f:
             validation_line = f.readline()
@@ -299,8 +300,8 @@ class Login:
                     elif int(remove_line) == i:
                         pass
                     else:
-                        val = bytes(val, 'utf-8')
-                        f.writelines(str(i) + str(self.fernet_object.encrypt(val)) + "\n")
+                        val = bytes((str(val)), 'utf-8')
+                        f.writelines(str(self.fernet_object.encrypt(val)) + "\n")
 
                     i += 1
             f.close()
