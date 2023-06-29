@@ -210,7 +210,7 @@ class Login:
                 word_list = write_to_page.split()
                 sentence_list = []
                 first = True
-                print(word_list)
+
                 for word in word_list:
                     if not first:
                         if word in months:
@@ -225,7 +225,7 @@ class Login:
                     else:
                         sentence_list.append(word)
                         first = False
-                print(document_list)
+
             else:
                 current_time = d.now()
                 month_num = int(current_time.strftime("%m"))
