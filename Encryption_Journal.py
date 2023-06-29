@@ -139,6 +139,7 @@ class Login:
     def Journal(self):
         dayMonthDict = {1:"Jan",2:"Feb",3:"Mar",4:"Apr",5:"May",6:"Jun",7:"July",8:"Aug",9:"Sep",10:"Oct",11:"Nov",12:"Dec"}
         choice = input("Commands: Write, Read, Delete, Quit\n")
+        months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
         #Appends contents of encrypted text file to document_list after decrypting
         document_list = []
@@ -152,6 +153,7 @@ class Login:
                 byte_character = bytes(character, 'utf-8')
                 understandable_val = self.fernet_object.decrypt(byte_character)
                 document_list.append(understandable_val.decode())
+
 
         sections = []
         with open(self.sections_directory, 'r', encoding='utf-8') as f:
@@ -178,6 +180,16 @@ class Login:
             if section.isspace() or section == "":
                 print("Improper Section Name")
                 self.Journal()
+
+
+
+
+
+
+
+
+
+
             section_val = "{" + section + "}"
             if section_val in sections:
                 pass
@@ -186,15 +198,41 @@ class Login:
             with open(self.sections_directory, 'w', encoding='utf-8') as f :
                 for line in sections:
                     f.writelines(line + "\n")
+            f.close()
 
             #Content added is given a date then appended to end of document_list
             write_to_page = input("Add: ")
-            current_time = d.now()
-            month_num = int(current_time.strftime("%m"))
-            month = dayMonthDict[month_num]
-            day_num = str(current_time.strftime("%d"))
-            time = str(current_time.strftime("%H:%M"))
-            document_list.append(section_val +" "+ month + " " + day_num + " " + time + " " + write_to_page)
+
+
+            if section == "OldData" :
+                write_to_page += "Jun"              #Adds to end of input so the function knows where to end it
+                i=1
+                word_list = write_to_page.split()
+                sentence_list = []
+                first = True
+                print(word_list)
+                for word in word_list:
+                    if not first:
+                        if word in months:
+
+                            sentence = " ".join(sentence_list)
+                            document_list.append("[" + str(i) + "]" + " " + sentence)
+                            i+=1
+                            sentence_list = []
+                            sentence_list.append(word)
+                        else:
+                            sentence_list.append(word)
+                    else:
+                        sentence_list.append(word)
+                        first = False
+                print(document_list)
+            else:
+                current_time = d.now()
+                month_num = int(current_time.strftime("%m"))
+                month = dayMonthDict[month_num]
+                day_num = str(current_time.strftime("%d"))
+                time = str(current_time.strftime("%H:%M"))
+                document_list.append(section_val +" "+ month + " " + day_num + " " + time + " " + write_to_page)
             i = 0
             with open(self.storage_directory, 'w', encoding='utf-8') as f :
                 for val in document_list :
@@ -265,6 +303,7 @@ class Login:
                         f.writelines(str(i) + str(self.fernet_object.encrypt(val)) + "\n")
 
                     i += 1
+            f.close()
         if choice.lower() == "quit":
             sys.exit()
         self.Journal()
@@ -279,3 +318,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+#Add an append old documents feature for easy copy and paste
