@@ -205,7 +205,7 @@ class Login:
 
 
             if section == "OldData" :
-                write_to_page += "Jun"              #Adds to end of input so the function knows where to end it
+                write_to_page += " Jun"              #Adds to end of input so the function knows where to end it
                 i=1
                 word_list = write_to_page.split()
                 sentence_list = []
